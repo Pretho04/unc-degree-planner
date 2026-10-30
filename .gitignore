@@ -1,0 +1,11 @@
+# Catalog pages cached by server.ps1 (rebuilt automatically)
+cache/
+
+# Local Claude Code / editor settings
+.claude/
+.vscode/
+
+# OS clutter
+Thumbs.db
+desktop.ini
+.DS_Store

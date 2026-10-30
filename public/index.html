@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UNC Degree Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <h1>UNC Degree Planner</h1>
+      <p>Majors, minors &amp; gen eds — what counts, what's left, prereqs, and open seats</p>
+    </div>
+  </header>
+
+  <main class="wrap layout">
+    <aside class="card side">
+      <h2>Your courses <span class="count" id="taken-count">0</span></h2>
+      <form id="add-form">
+        <label for="add-input" class="small muted">Type or paste course codes (or paste text from your Tar Heel Tracker or transcript)</label>
+        <textarea id="add-input" rows="3" placeholder="COMP 110, MATH 231, ENGL 105"></textarea>
+        <div class="row">
+          <button type="submit" class="primary">Add courses</button>
+          <button type="button" id="clear-taken" class="ghost">Clear all</button>
+        </div>
+        <p id="add-msg" class="small muted" aria-live="polite"></p>
+      </form>
+      <div class="import">
+        <label class="file-btn">
+          Import from PDF
+          <input type="file" id="pdf-input" accept="application/pdf,.pdf">
+        </label>
+        <p class="small muted">Save your Tar Heel Tracker report or unofficial transcript from ConnectCarolina as a PDF, then pick it here. It's read on your computer and never uploaded.</p>
+      </div>
+      <div id="taken-list" class="chips"></div>
+
+      <hr>
+      <label for="term-select"><b>Term for seat checks</b></label>
+      <select id="term-select"><option value="">All upcoming terms</option></select>
+      <p class="small muted">Seat counts come live from UNC Class Search (refreshed every 2 minutes).</p>
+      <p id="status" class="error small" aria-live="polite"></p>
+    </aside>
+
+    <section class="card main">
+      <div class="tabs" role="tablist">
+        <button role="tab" data-tab="matches" aria-selected="true">Best fit</button>
+        <button role="tab" data-tab="detail" aria-selected="false">Details</button>
+        <button role="tab" data-tab="ideas" aria-selected="false">IDEAs in Action</button>
+      </div>
+
+      <div id="panel-matches" role="tabpanel">
+        <div class="toolbar">
+          <select id="type-filter" aria-label="Majors or minors">
+            <option value="minor">Minors</option>
+            <option value="major">Majors</option>
+            <option value="all">Majors and minors</option>
+          </select>
+          <button id="scan-btn" class="primary">Scan</button>
+          <select id="match-filter" aria-label="Which programs to show">
+            <option value="progress">Only ones I've started</option>
+            <option value="all">Show all</option>
+          </select>
+        </div>
+        <div id="scan-progress" class="small muted" hidden></div>
+        <div id="matches" class="matches">
+          <p class="muted">Add your courses, pick Majors or Minors, then click <b>Scan</b>. The first scan reads every program in the UNC catalog (about a minute each for majors and minors). After that it's cached.</p>
+        </div>
+      </div>
+
+      <div id="panel-detail" role="tabpanel" hidden>
+        <div class="toolbar">
+          <select id="minor-select" aria-label="Choose a major or minor"><option value="">Loading programs…</option></select>
+        </div>
+        <div id="detail"><p class="muted">Pick a major or minor above, or open one from Best fit.</p></div>
+      </div>
+
+      <div id="panel-ideas" role="tabpanel" hidden>
+        <div id="ideas"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap small muted">
+    Requirements are read automatically from catalog.unc.edu and may miss special rules (grade minimums, double-counting limits, substitutions).
+    Confirm your plan with Tar Heel Tracker and your advisor.
+  </footer>
+  <dialog id="import-dialog" aria-labelledby="import-title">
+    <h2 id="import-title">Courses found in your PDF</h2>
+    <div id="import-body"></div>
+    <div class="row dialog-actions">
+      <button type="button" id="import-cancel" class="ghost">Cancel</button>
+      <button type="button" id="import-add" class="primary">Add checked courses</button>
+    </div>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>
