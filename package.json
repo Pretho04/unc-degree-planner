@@ -1,0 +1,12 @@
+{
+  "name": "unc-degree-planner",
+  "private": true,
+  "description": "Unofficial UNC-Chapel Hill major, minor and gen-ed planner",
+  "scripts": {
+    "dev": "wrangler dev --port 8788",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

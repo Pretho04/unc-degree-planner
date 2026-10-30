@@ -1,8 +1,12 @@
 # UNC Degree Planner
 
-A local web app that finds which UNC-Chapel Hill majors and minors your completed courses count toward. For each program it shows what's left, the prerequisites for each remaining course, and live open seats.
+**Live site: https://unc-degree-planner.unc-degree-planner.workers.dev**
 
-## Run it
+A web app that finds which UNC-Chapel Hill majors and minors your completed courses count toward, and checks your IDEAs in Action gen eds. For each program it shows what's left, the prerequisites for each remaining course, and live open seats.
+
+This is an unofficial student tool, not affiliated with UNC-Chapel Hill. Confirm your plan with Tar Heel Tracker and your advisor. Your course list is stored only in your own browser.
+
+## Run it on your own computer (Windows)
 
 Double-click `start.bat`, or run:
 
@@ -13,6 +17,18 @@ powershell -ExecutionPolicy Bypass -File server.ps1
 Your browser opens to http://localhost:8787. Leave the window open while you use the app. Press Ctrl+C to stop it.
 
 You don't need to install anything: it uses Windows PowerShell.
+
+## Deploy to Cloudflare
+
+The live site runs on Cloudflare Workers. `worker/index.js` does the same job as `server.ps1`, and the files in `public/` are served as-is. You need Node.js and a free Cloudflare account.
+
+```
+npm install
+npx wrangler login
+npm run deploy
+```
+
+Run `npm run dev` to test the Cloudflare version locally at http://localhost:8788. Catalog pages are cached at Cloudflare for a week and seat counts for 2 minutes, which keeps traffic to UNC low.
 
 ## Importing your courses from a PDF
 

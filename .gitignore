@@ -1,6 +1,11 @@
 # Catalog pages cached by server.ps1 (rebuilt automatically)
 cache/
 
+# Cloudflare / Node
+node_modules/
+.wrangler/
+.dev.vars
+
 # Local Claude Code / editor settings
 .claude/
 .vscode/

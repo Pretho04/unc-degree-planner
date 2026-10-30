@@ -983,10 +983,14 @@ const ideasLists = {};   // page -> [{ alts: [{codes, title}] }]
 state.ideasManual = load('ideas_manual', {});
 state.cohort = load('cohort', '2025');
 
+// A page that fails is skipped (its requirement shows no course list) and retried on the next call.
 async function loadIdeas() {
   const pages = [...new Set(IDEAS.flatMap(r => [r.page, r.alsoPage]).filter(Boolean))].filter(p => !ideasLists[p]);
+  let failed = 0;
   await pool(pages, 3, async page => {
-    const html = await api('/api/catalog?path=' + encodeURIComponent(`/undergraduate/ideas-in-action/${page}/`));
+    let html;
+    try { html = await api('/api/catalog?path=' + encodeURIComponent(`/undergraduate/ideas-in-action/${page}/`)); }
+    catch { failed++; return; }
     const doc = parser.parseFromString(html, 'text/html');
     const seen = new Set(), list = [];
     const tables = [...doc.querySelectorAll('table.sc_courselist')];
@@ -1004,6 +1008,7 @@ async function loadIdeas() {
     ideasLists[page] = list;
   });
   ideasIndex = null;
+  if (failed) throw new Error(`${failed} IDEAs in Action list(s) couldn't be loaded. Open the IDEAs tab to retry.`);
 }
 
 const activeIdeas = () => IDEAS.filter(r => !(r.since2025 && state.cohort === 'pre2025'));
@@ -1257,7 +1262,12 @@ async function importPdf(file) {
 function switchTab(name) {
   document.querySelectorAll('[role=tab]').forEach(t => t.setAttribute('aria-selected', t.dataset.tab === name));
   document.querySelectorAll('[role=tabpanel]').forEach(p => { p.hidden = p.id !== 'panel-' + name; });
-  if (name === 'ideas') renderIdeas();
+  if (name === 'ideas') {
+    renderIdeas();
+    // Retry any lists that failed to load earlier.
+    const missing = IDEAS.some(r => (r.page && !ideasLists[r.page]) || (r.alsoPage && !ideasLists[r.alsoPage]));
+    if (missing) loadIdeas().then(() => { $('#status').textContent = ''; }).catch(e => { $('#status').textContent = e.message; }).finally(renderIdeas);
+  }
 }
 
 function toggleCoursePanel(btn) {
